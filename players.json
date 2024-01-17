@@ -6,5 +6,9 @@
     {
         "Name": "Youtube Music",
         "URL": "https://music.youtube.com/"
+    },
+    {
+        "Name": "Spotify",
+        "URL": "https://open.spotify.com/"
     }
 ]

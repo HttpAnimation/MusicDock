@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicDock</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        #buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #buttons button {
+            background-color: #1db954;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #buttons button:hover {
+            background-color: #25a04c;
+        }
+
+        #embedContainer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #embedFrame {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 15px;
+        }
+
+        #settingsContainer {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 2;
+        }
+
+        #settingsContainer label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #settingsContainer input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background-color: #121212;
+            color: #fff;
+        }
+
+        #settingsContainer button {
+            background-color: #1db954;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        #darkModeToggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <h1>MusicDock</h1>
+</div>
+
+<div id="buttons">
+    <button onclick="goToIndex()">Go to Index</button>
+    <button onclick="toggleSettings()">Settings (P)</button>
+</div>
+
+<div id="embedContainer">
+    <iframe id="embedFrame" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<div id="settingsContainer">
+    <label for="repoUrl">Enter Repo URL:</label>
+    <input type="text" id="repoUrl" placeholder="Enter new repo URL">
+    <button onclick="updateRepo()">Update Repo</button>
+    <button onclick="toggleSettings()">Close</button>
+</div>
+
+<script>
+    function toggleSettings() {
+        const settingsContainer = document.getElementById('settingsContainer');
+        settingsContainer.style.display = settingsContainer.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function goToIndex() {
+        window.location.href = '../../index.html';
+    }
+
+    function updateRepo() {
+        const newRepoUrl = document.getElementById('repoUrl').value;
+        if (newRepoUrl) {
+            fetch(newRepoUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const buttonsContainer = document.getElementById('buttons');
+                    buttonsContainer.innerHTML = '';
+                    const embedFrame = document.getElementById('embedFrame');
+
+                    data.forEach(player => {
+                        const button = document.createElement('button');
+                        button.textContent = player.Name;
+                        button.addEventListener('click', () => {
+                            embedFrame.src = player.URL;
+                        });
+                        buttonsContainer.appendChild(button);
+                    });
+                });
+        }
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'p' || event.key === 'P') {
+            toggleSettings();
+        }
+    });
+
+    fetch('https://raw.githubusercontent.com/HttpAnimation/MusicDock/main/players.json')
+        .then(response => response.json())
+        .then(data => {
+            const buttonsContainer = document.getElementById('buttons');
+            const embedFrame = document.getElementById('embedFrame');
+
+            data.forEach(player => {
+                const button = document.createElement('button');
+                button.textContent = player.Name;
+                button.addEventListener('click', () => {
+                    embedFrame.src = player.URL;
+                });
+                buttonsContainer.appendChild(button);
+            });
+        });
+</script>
+
+</body>
+</html>
